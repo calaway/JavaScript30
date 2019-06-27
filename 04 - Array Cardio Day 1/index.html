@@ -52,7 +52,7 @@
 
 
     // 5. Sort the inventors by years lived
-    const yearsLived = inventors.sort(function(inventor1, inventor2) {
+    const yearsLived = inventors.sort((inventor1, inventor2) => {
       return (inventor1.passed - inventor1.year) > (inventor2.passed - inventor2.year) ? 1 : -1;
     });
     console.table(yearsLived);
