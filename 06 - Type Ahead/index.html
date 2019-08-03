@@ -26,16 +26,23 @@ fetch(endpoint)
 const searchElement = document.querySelector('.search')
 const suggestionsElement = document.querySelector('.suggestions')
 
-searchElement.addEventListener('keyup', () => {
-  let searchResults = cities.filter(city => (
-    city.city.toLowerCase().includes(searchElement.value)
+function findMatches(searchTerm) {
+  return cities.filter(city => (
+    city.city.toLowerCase().includes(searchTerm)
   ))
-    .map(city => (`
-      <li>${city.city}, ${city.state}<span class="population">${city.population}</span></li>
-    `)).join('\n')
+}
 
-  suggestionsElement.innerHTML = searchResults
-})
+function displayMatches() {
+  const searchResults = findMatches(this.value)
+
+  const html = searchResults.map(city => (`
+    <li>${city.city}, ${city.state}<span class="population">${city.population}</span></li>
+  `)).join('\n')
+
+  suggestionsElement.innerHTML = html
+}
+
+searchElement.addEventListener('keyup', displayMatches)
 
 </script>
 </body>
