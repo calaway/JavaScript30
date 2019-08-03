@@ -26,18 +26,22 @@ fetch(endpoint)
 const searchElement = document.querySelector('.search')
 const suggestionsElement = document.querySelector('.suggestions')
 
-function findMatches(searchTerm) {
-  const regExp = new RegExp(searchTerm.split('').join('.*'), 'i')
-
+function findMatches(regExp) {
   return cities.filter(city => (`${city.city} ${city.state}`).match(regExp))
 }
 
 function displayMatches() {
-  const searchResults = findMatches(this.value)
+  const regExp = new RegExp(this.value.split('').join('.*'), 'gi')
+  const searchResults = findMatches(regExp)
 
-  const html = searchResults.map(city => (`
-    <li>${city.city}, ${city.state}<span class="population">${city.population}</span></li>
-  `)).join('\n')
+  const html = searchResults.map(city => {
+    const cityState = `${city.city}, ${city.state}`.replace(regExp, match => `<span class='hl'>${match}</span>`)
+    console.log(cityState);
+
+    return `
+      <li><span class="city-state">${cityState}</span><span class="population">${city.population}</span></li>
+    `;
+  }).join('\n')
 
   suggestionsElement.innerHTML = html
 }
