@@ -1,53 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <form class="search-form">
+      <input type="text" class="search" placeholder="City or State" />
+      <ul class="suggestions">
+        <li>Filter for a city</li>
+        <li>or a state</li>
+      </ul>
+    </form>
+    <script>
+      const endpoint =
+        "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+      const cities = [];
 
-const cities = [];
+      fetch(endpoint)
+        .then((response) => response.json())
+        .then((data) => cities.push(...data));
 
-fetch(endpoint)
-  .then(response => response.json())
-  .then(data => cities.push(...data))
+      const searchElement = document.querySelector(".search");
+      const suggestionsElement = document.querySelector(".suggestions");
 
-const searchElement = document.querySelector('.search')
-const suggestionsElement = document.querySelector('.suggestions')
+      function findMatches(regExp) {
+        return cities.filter((city) =>
+          `${city.city} ${city.state}`.match(regExp)
+        );
+      }
 
-function findMatches(regExp) {
-  return cities.filter(city => (`${city.city} ${city.state}`).match(regExp))
-}
+      function displayMatches() {
+        const regExp = new RegExp(this.value.split("").join(".*"), "gi");
+        const searchResults = findMatches(regExp);
 
-function displayMatches() {
-  const regExp = new RegExp(this.value.split('').join('.*'), 'gi')
-  const searchResults = findMatches(regExp)
+        const html = searchResults
+          .map((city) => {
+            const cityState = `${city.city}, ${city.state}`.replace(
+              regExp,
+              (match) => `<span class='hl'>${match}</span>`
+            );
+            console.log(cityState);
 
-  const html = searchResults.map(city => {
-    const cityState = `${city.city}, ${city.state}`.replace(regExp, match => `<span class='hl'>${match}</span>`)
-    console.log(cityState);
-
-    return `
+            return `
       <li><span class="city-state">${cityState}</span><span class="population">${city.population}</span></li>
     `;
-  }).join('\n')
+          })
+          .join("\n");
 
-  suggestionsElement.innerHTML = html
-}
+        suggestionsElement.innerHTML = html;
+      }
 
-searchElement.addEventListener('keyup', displayMatches)
-
-</script>
-</body>
+      searchElement.addEventListener("keyup", displayMatches);
+    </script>
+  </body>
 </html>
